@@ -196,6 +196,8 @@
   .station:hover .ring { stroke-width: 4.5; }
   .station:focus-visible .ring { stroke: var(--focus); stroke-width: 4.5; }
   .station.sel .ring { stroke: var(--ink); stroke-width: 4.5; }
+  .station.dest:hover .plate { stroke-width: 5; }
+  .station.dest.sel .plate { stroke-width: 7; }
 
   .dest .plate { stroke-width: 2; rx: 3; transition: opacity .18s ease; }
   .dest .plate-lbl {
@@ -288,7 +290,7 @@
   <header>
     <div class="eyebrow">Grafo de rotas técnicas · 53 estações · 15 linhas · 12 terminais · <a href="./" style="color:inherit;text-decoration:underline;text-underline-offset:3px;opacity:.85">English</a></div>
     <h1>Mapa de rotas da engenharia de IA e software</h1>
-    <p class="lede">Isto não é uma árvore de habilidades: é um <strong>grafo</strong>. Estações são compartilhadas entre linhas, e vários destinos são alcançáveis por trajetos completamente diferentes — chega-se a Engenheiro de IA por dados, por backend ou pelo produto, e quem chega por cada rota carrega uma bagagem distinta. Escolha um destino para ver quais linhas levam até lá, clique numa linha para isolá-la, ou clique numa estação para saber o que ela é e quem passa por ela.</p>
+    <p class="lede">Isto não é uma árvore de habilidades: é um <strong>grafo</strong>. Estações são compartilhadas entre linhas, e vários destinos são alcançáveis por trajetos completamente diferentes — chega-se a Engenheiro de IA por dados, por backend ou pelo produto, e quem chega por cada rota carrega uma bagagem distinta. Clique num destino para ver todas as linhas que chegam nele, numa linha para isolá-la, ou em qualquer estação para saber o que ela é e quem passa por ela.</p>
   </header>
 
   <div class="controls">
@@ -735,7 +737,7 @@
 
     if (n.t === "dest") {
       const g = el("g", { class: "station dest", tabindex: "0", role: "button",
-                          "aria-label": `Destino: ${n.l}` });
+                          "aria-label": `Destino: ${n.l}. Clique para ver as linhas que chegam nele.` });
       const w = Math.max(150, n.l.length * 8.4);
       g.appendChild(el("rect", { class: "plate", x: x - w / 2, y: y - 17, width: w, height: 34,
                                  style: `fill: ${primeira}; stroke: ${primeira}` }));
@@ -937,9 +939,22 @@
     renderPanel(null); repaint();
   };
 
+  // Clicar num terminal tambem filtra por ele. Filtrar por destino e a interacao
+  // central do mapa, e ate aqui era a unica que so existia no seletor, enquanto
+  // isolar uma linha, que importa menos, ja respondia ao clique.
+  function escolherEstacao(id) {
+    selNode = id;
+    if (N[id] && N[id].t === "dest") {
+      selDest = selDest === id ? "" : id;
+      selDestEl.value = selDest;
+      selRoute = ""; selRouteEl.value = "";
+    }
+    renderPanel(selNode); repaint();
+  }
+
   gNodes.addEventListener("click", e => {
     const g = e.target.closest(".station"); if (!g) return;
-    selNode = g.dataset.node; renderPanel(selNode); repaint();
+    escolherEstacao(g.dataset.node);
   });
   function escolherLinha(id) {
     const r = routeById[id];
@@ -970,7 +985,7 @@
     if (e.key !== "Enter" && e.key !== " ") return;
     const g = e.target.closest(".station"); if (!g) return;
     e.preventDefault();
-    selNode = g.dataset.node; renderPanel(selNode); repaint();
+    escolherEstacao(g.dataset.node);
   });
 
   // ---------------------------------------------------------------- legenda

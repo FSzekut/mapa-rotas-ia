@@ -196,6 +196,8 @@
   .station:hover .ring { stroke-width: 4.5; }
   .station:focus-visible .ring { stroke: var(--focus); stroke-width: 4.5; }
   .station.sel .ring { stroke: var(--ink); stroke-width: 4.5; }
+  .station.dest:hover .plate { stroke-width: 5; }
+  .station.dest.sel .plate { stroke-width: 7; }
 
   .dest .plate { stroke-width: 2; rx: 3; transition: opacity .18s ease; }
   .dest .plate-lbl {
@@ -288,7 +290,7 @@
   <header>
     <div class="eyebrow">Technical route graph · 53 stations · 15 lines · 12 terminals · <a href="pt.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;opacity:.85">Português</a></div>
     <h1>A route map of AI and software engineering</h1>
-    <p class="lede">This is not a skill tree, it is a <strong>graph</strong>. Stations are shared between lines, and several destinations are reachable by completely different journeys: you get to AI Engineer through data, through backend or through product, and each route leaves you carrying something different. Pick a destination to see which lines run there, click a line to isolate it, or click a station to find out what it is and who passes through it.</p>
+    <p class="lede">This is not a skill tree, it is a <strong>graph</strong>. Stations are shared between lines, and several destinations are reachable by completely different journeys: you get to AI Engineer through data, through backend or through product, and each route leaves you carrying something different. Click a destination to see every line that reaches it, a line to isolate it, or any station to find out what it is and who passes through it.</p>
   </header>
 
   <div class="controls">
@@ -735,7 +737,7 @@
 
     if (n.t === "dest") {
       const g = el("g", { class: "station dest", tabindex: "0", role: "button",
-                          "aria-label": `Destino: ${n.l}` });
+                          "aria-label": `Destination: ${n.l}. Click to see the lines that reach it.` });
       const w = Math.max(150, n.l.length * 8.4);
       g.appendChild(el("rect", { class: "plate", x: x - w / 2, y: y - 17, width: w, height: 34,
                                  style: `fill: ${primeira}; stroke: ${primeira}` }));
@@ -749,7 +751,7 @@
     const hub = n.t === "hub";
     const rad = hub ? 17 : (linhas.length >= 3 ? 11.5 : 8);
     const g = el("g", { class: "station" + (hub ? " hub" : ""), tabindex: "0", role: "button",
-                        "aria-label": `${n.l}. ${linhas.length} linha${linhas.length === 1 ? "" : "s"} passa${linhas.length === 1 ? "" : "m"} aqui.` });
+                        "aria-label": `${n.l}. ${linhas.length} line${linhas.length === 1 ? "" : "s"} pass${linhas.length === 1 ? "es" : ""} through here.` });
     if (linhas.length >= 3 && !hub) {
       g.appendChild(el("circle", { class: "ring outer", cx: x, cy: y, r: rad + 4,
                                    style: `stroke: ${primeira}; fill: none; opacity:.28; stroke-width:2` }));
@@ -937,9 +939,22 @@
     renderPanel(null); repaint();
   };
 
+  // Clicar num terminal tambem filtra por ele. Filtrar por destino e a interacao
+  // central do mapa, e ate aqui era a unica que so existia no seletor, enquanto
+  // isolar uma linha, que importa menos, ja respondia ao clique.
+  function escolherEstacao(id) {
+    selNode = id;
+    if (N[id] && N[id].t === "dest") {
+      selDest = selDest === id ? "" : id;
+      selDestEl.value = selDest;
+      selRoute = ""; selRouteEl.value = "";
+    }
+    renderPanel(selNode); repaint();
+  }
+
   gNodes.addEventListener("click", e => {
     const g = e.target.closest(".station"); if (!g) return;
-    selNode = g.dataset.node; renderPanel(selNode); repaint();
+    escolherEstacao(g.dataset.node);
   });
   function escolherLinha(id) {
     const r = routeById[id];
@@ -970,7 +985,7 @@
     if (e.key !== "Enter" && e.key !== " ") return;
     const g = e.target.closest(".station"); if (!g) return;
     e.preventDefault();
-    selNode = g.dataset.node; renderPanel(selNode); repaint();
+    escolherEstacao(g.dataset.node);
   });
 
   // ---------------------------------------------------------------- legenda
