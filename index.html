@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A transit-map of the technical routes through AI and software engineering. Not a skill tree but a graph, where the same destination is reached by completely different paths.">
+<meta name="author" content="Fernando Cezar Szekut">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Route Map — AI and Software Engineering">
+<meta property="og:description" content="53 stations, 15 lines, 12 destinations. You reach AI Engineer through data, through backend or through product, and each route leaves you carrying something different.">
+<meta property="og:image" content="https://fszekut.github.io/mapa-rotas-ia/preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<title>Route Map — AI and Software Engineering</title>
+<style>
+  /* ---------- tokens: light theme (base, unstamped) ---------- */
+  :root {
+    --ground:      #E9EDF0;
+    --surface:     #FBFCFD;
+    --surface-2:   #F1F4F7;
+    --surface-3:   #E3E8EC;
+    --ink:         #0F171D;
+    --ink-2:       #46545F;
+    --ink-3:       #7C8992;
+    --line:        #D2DAE0;
+    --line-soft:   #E1E7EB;
+    --accent:      #0B6E7F;
+    --accent-soft: #D8EBEE;
+    --focus:       #0B6E7F;
+    --shadow:      0 1px 2px rgba(15,23,29,.06), 0 8px 24px rgba(15,23,29,.06);
+
+    --r-fund:      #66757F;
+    --r-front:     #B7660F;
+    --r-mobile:    #A93459;
+    --r-fullstack: #64871B;
+    --r-back:      #1B7454;
+    --r-ml:        #B93A2B;
+    --r-dl:        #872C36;
+    --r-ia-dados:  #7444BE;
+    --r-ia-back:   #97389F;
+    --r-ia-prod:   #B02F76;
+    --r-ds:        #0C7580;
+    --r-de:        #147264;
+    --r-da:        #96790F;
+    --r-cloud:     #2760AC;
+    --r-mlops:     #145B77;
+  }
+  /* ---------- dark theme by system preference ---------- */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0B1115;
+      --surface:     #131B21;
+      --surface-2:   #1A242B;
+      --surface-3:   #223038;
+      --ink:         #E8EFF3;
+      --ink-2:       #A2B1BB;
+      --ink-3:       #6E7E89;
+      --line:        #24323A;
+      --line-soft:   #1C272E;
+      --accent:      #47B9CB;
+      --accent-soft: #12333C;
+      --focus:       #47B9CB;
+      --shadow:      0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.35);
+
+      --r-fund:      #8E9DA7;
+      --r-front:     #E29A34;
+      --r-mobile:    #E37D97;
+      --r-fullstack: #A9C74D;
+      --r-back:      #45BE90;
+      --r-ml:        #E97A6C;
+      --r-dl:        #D5757F;
+      --r-ia-dados:  #AC8CEF;
+      --r-ia-back:   #CB84D6;
+      --r-ia-prod:   #E884B7;
+      --r-ds:        #38BAC5;
+      --r-de:        #43C2A9;
+      --r-da:        #D7B644;
+      --r-cloud:     #6899E1;
+      --r-mlops:     #4AA8C6;
+    }
+  }
+  /* ---------- dark theme by explicit choice ---------- */
+  :root[data-theme="dark"] {
+    --ground:      #0B1115;
+    --surface:     #131B21;
+    --surface-2:   #1A242B;
+    --surface-3:   #223038;
+    --ink:         #E8EFF3;
+    --ink-2:       #A2B1BB;
+    --ink-3:       #6E7E89;
+    --line:        #24323A;
+    --line-soft:   #1C272E;
+    --accent:      #47B9CB;
+    --accent-soft: #12333C;
+    --focus:       #47B9CB;
+    --shadow:      0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.35);
+
+    --r-fund:      #8E9DA7;
+    --r-front:     #E29A34;
+    --r-mobile:    #E37D97;
+    --r-fullstack: #A9C74D;
+    --r-back:      #45BE90;
+    --r-ml:        #E97A6C;
+    --r-dl:        #D5757F;
+    --r-ia-dados:  #AC8CEF;
+    --r-ia-back:   #CB84D6;
+    --r-ia-prod:   #E884B7;
+    --r-ds:        #38BAC5;
+    --r-de:        #43C2A9;
+    --r-da:        #D7B644;
+    --r-cloud:     #6899E1;
+    --r-mlops:     #4AA8C6;
+  }
+
+  :root {
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", "Roboto Mono", Menlo, Consolas, monospace;
+    --pad: clamp(16px, 3vw, 34px);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1560px; margin: 0 auto; padding: var(--pad); display: flex; flex-direction: column; gap: 26px; }
+
+  /* ---------- header ---------- */
+  header { display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--line); padding-bottom: 22px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--accent); display: flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::after { content: ""; height: 1px; flex: 1; background: var(--line); }
+  h1 { font-size: clamp(26px, 4vw, 40px); line-height: 1.12; margin: 0; letter-spacing: -.02em; text-wrap: balance; font-weight: 620; }
+  .lede { margin: 0; max-width: 68ch; color: var(--ink-2); font-size: 17px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- barra de controles ---------- */
+  .controls {
+    display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 20px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 14px 16px;
+  }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3);
+  }
+  select, .btn {
+    font-family: var(--sans); font-size: 14px; color: var(--ink);
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 3px;
+    padding: 7px 11px; cursor: pointer;
+  }
+  select { min-width: 250px; }
+  .btn:hover, select:hover { border-color: var(--accent); }
+  .btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--ink); }
+  .zoomers { display: flex; gap: 6px; margin-left: auto; }
+  .zoomers .btn { font-family: var(--mono); min-width: 34px; text-align: center; padding: 7px 9px; }
+  :is(select, .btn, [tabindex]):focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  .readout {
+    font-family: var(--mono); font-size: 12px; color: var(--ink-2);
+    padding: 4px 0; min-height: 22px;
+  }
+  .readout b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- map area + panel ---------- */
+  .stage { display: grid; grid-template-columns: minmax(0, 1fr) 336px; gap: 18px; align-items: start; }
+  @media (max-width: 1080px) { .stage { grid-template-columns: minmax(0, 1fr); } }
+
+  .mapbox {
+    position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+    overflow: hidden; height: min(76vh, 780px); box-shadow: var(--shadow);
+    cursor: grab; touch-action: none;
+  }
+  .mapbox.dragging { cursor: grabbing; }
+  .mapbox svg { display: block; width: 100%; height: 100%; }
+
+  .grid-dot { fill: var(--line-soft); }
+
+  .route-line { fill: none; stroke-linecap: round; stroke-linejoin: round; transition: opacity .18s ease, stroke-width .18s ease; }
+  .station { cursor: pointer; }
+  .station .ring { fill: var(--surface); stroke-width: 3; transition: opacity .18s ease; }
+  .station .lbl {
+    font-family: var(--sans); font-size: 12.5px; font-weight: 520; fill: var(--ink);
+    text-anchor: middle; pointer-events: none; transition: opacity .18s ease;
+  }
+  .station.hub .lbl { font-size: 17px; font-weight: 700; letter-spacing: .01em; }
+  .station:hover .ring { stroke-width: 4.5; }
+  .station:focus-visible .ring { stroke: var(--focus); stroke-width: 4.5; }
+  .station.sel .ring { stroke: var(--ink); stroke-width: 4.5; }
+
+  .dest .plate { stroke-width: 2; rx: 3; transition: opacity .18s ease; }
+  .dest .plate-lbl {
+    font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: .04em;
+    fill: var(--surface); text-anchor: middle; pointer-events: none; text-transform: uppercase;
+  }
+  .dimmed { opacity: .09; }
+  .dim-mid { opacity: .3; }
+
+  /* ---------- painel lateral ---------- */
+  .panel {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+    padding: 18px; display: flex; flex-direction: column; gap: 14px;
+    max-height: min(76vh, 780px); overflow-y: auto; box-shadow: var(--shadow);
+  }
+  .panel .kicker { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3); }
+  .panel h2 { margin: 0; font-size: 21px; line-height: 1.22; letter-spacing: -.01em; text-wrap: balance; }
+  .panel p { margin: 0; font-size: 14.5px; color: var(--ink-2); }
+  .panel h3 {
+    margin: 0; font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 12px;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-family: var(--mono); font-size: 11.5px; padding: 3px 8px; border-radius: 2px;
+    background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-2);
+  }
+  .routelist { display: flex; flex-direction: column; gap: 7px; list-style: none; margin: 0; padding: 0; }
+  .routelist button {
+    display: flex; align-items: center; gap: 9px; width: 100%; text-align: left;
+    background: none; border: 0; padding: 4px 0; cursor: pointer; color: var(--ink);
+    font-family: var(--sans); font-size: 13.5px; line-height: 1.35;
+  }
+  .routelist button:hover { color: var(--accent); }
+  .swatch { width: 16px; height: 4px; border-radius: 2px; flex: none; }
+  .swatch.tall { height: 14px; width: 4px; }
+  .depth { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); }
+  .bars { display: flex; gap: 3px; }
+  .bars i { width: 16px; height: 5px; background: var(--surface-3); border-radius: 1px; display: block; }
+  .bars i.on { background: var(--accent); }
+  .neighbors { display: flex; flex-direction: column; gap: 8px; }
+  .neighbor { font-size: 13px; color: var(--ink-2); display: flex; gap: 8px; align-items: baseline; }
+  .neighbor .arrow { font-family: var(--mono); color: var(--ink-3); flex: none; }
+  .neighbor b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- legenda ---------- */
+  .legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px 26px; }
+  .fam { display: flex; flex-direction: column; gap: 7px; }
+  .fam h4 {
+    margin: 0 0 2px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .fam button {
+    display: flex; align-items: center; gap: 9px; background: none; border: 0; padding: 2px 0;
+    cursor: pointer; text-align: left; color: var(--ink-2); font-family: var(--sans); font-size: 13.5px; width: 100%;
+  }
+  .fam button:hover { color: var(--ink); }
+  .fam button[aria-pressed="true"] { color: var(--ink); font-weight: 620; }
+
+  /* ---------- prosa ---------- */
+  section.prose { display: flex; flex-direction: column; gap: 14px; border-top: 1px solid var(--line); padding-top: 24px; }
+  section.prose h2 { margin: 0; font-size: 23px; letter-spacing: -.01em; text-wrap: balance; }
+  section.prose p { margin: 0; max-width: 72ch; color: var(--ink-2); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(272px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+    padding: 16px; display: flex; flex-direction: column; gap: 9px; border-top: 3px solid var(--ink-3);
+  }
+  .card .rt { font-family: var(--mono); font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); }
+  .card h3 { margin: 0; font-size: 16.5px; line-height: 1.3; }
+  .card p { margin: 0; font-size: 14px; color: var(--ink-2); }
+  .card .path { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); line-height: 1.65; }
+
+  .howto { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px 24px; }
+  .howto div { display: flex; flex-direction: column; gap: 5px; }
+  .howto dt { font-family: var(--mono); font-size: 11px; letter-spacing: .13em; text-transform: uppercase; color: var(--accent); }
+  .howto dd { margin: 0; font-size: 14px; color: var(--ink-2); }
+
+  footer { border-top: 1px solid var(--line); padding-top: 18px; color: var(--ink-3); font-size: 13px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Technical route graph · 53 stations · 15 lines · 12 terminals · <a href="pt.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;opacity:.85">Português</a></div>
+    <h1>A route map of AI and software engineering</h1>
+    <p class="lede">This is not a skill tree, it is a <strong>graph</strong>. Stations are shared between lines, and several destinations are reachable by completely different journeys: you get to AI Engineer through data, through backend or through product, and each route leaves you carrying something different. Pick a destination to see which lines run there, or click a station to find out what it is and who passes through it.</p>
+  </header>
+
+  <div class="controls">
+    <div class="field">
+      <label for="dest">Filter by destination</label>
+      <select id="dest">
+        <option value="">Whole territory</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="route">Isolate one line</label>
+      <select id="route">
+        <option value="">All lines</option>
+      </select>
+    </div>
+    <button class="btn" id="clear" type="button">Clear selection</button>
+    <div class="zoomers">
+      <button class="btn" id="zout" type="button" aria-label="Zoom out">−</button>
+      <button class="btn" id="zfit" type="button" aria-label="Fit map">↺</button>
+      <button class="btn" id="zin" type="button" aria-label="Zoom in">+</button>
+    </div>
+  </div>
+
+  <div class="readout" id="readout"></div>
+
+  <div class="stage">
+    <div class="mapbox" id="mapbox">
+      <svg id="map" role="img" aria-label="Transit-network map of the technical routes through AI and software engineering"></svg>
+    </div>
+    <aside class="panel" id="panel"></aside>
+  </div>
+
+  <div class="legend" id="legend"></div>
+
+  <section class="prose">
+    <h2>Same destination, different routes</h2>
+    <p>The clearest case is <strong>AI Engineer</strong>. Three lines end there, and none of them is more legitimate than the others. What changes is where you are strong and where you are going to struggle. Job postings usually describe only one of these routes, which makes it look as though a single path exists.</p>
+    <div class="cards" id="ai-cards"></div>
+    <p>The same holds for <strong>ML Engineer</strong>, reachable through data science (you can model but cannot operate) or through infrastructure (you can operate but cannot model), and for <strong>Fullstack</strong>, which is either frontend that learned the server or backend that learned the interface. In every case the predictable gap sits on the opposite side from where you started.</p>
+  </section>
+
+  <section class="prose">
+    <h2>How to read this map</h2>
+    <div class="howto">
+      <div><dt>Station</dt><dd>A technology, a practice or a fundamental. The circle grows as more lines pass through it, and the biggest ones are the interchanges, which pay for themselves on any route.</dd></div>
+      <div><dt>Interchange</dt><dd>A station served by three lines or more. This is what you learn once and reuse in several directions, which makes it the best investment while the destination is still undecided.</dd></div>
+      <div><dt>Line</dt><dd>A plausible journey to a role. The order suggests a reasonable learning sequence rather than an obligation, and you can board halfway.</dd></div>
+      <div><dt>Terminal</dt><dd>The rectangular plates on the right are market roles, not certifications. Several of them show up in job postings under different names.</dd></div>
+      <div><dt>Depth</dt><dd>The three bars in the panel show how long a station usually takes to reach a level you can use in production, not how hard the concept is.</dd></div>
+      <div><dt>What is missing here</dt><dd>Communication, reading other people's code, technical writing and domain understanding have no station because they cut across the whole map. They usually decide more than the stack does.</dd></div>
+    </div>
+  </section>
+
+  <footer>A neutral map of the field. It describes routes people actually take, without recommending one. The sequences are plausible learning orders, not rigid prerequisites.</footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  // ---------------------------------------------------------------- stations
+  // col/row set the position on the grid; type separates fundamental, technology,
+  // practice and destination; weight is the typical depth to production level.
+  const N = {
+    // fundamentals
+    logica:   { col:0,  row:12, l:"Logic and data structures", t:"base", p:2,
+                d:"How a program decides, repeats and organizes information in memory. It is what separates people who write code from people who copy it.",
+                tools:["lists and dictionaries","recursion","O(n) complexity","trees and graphs"] },
+    git:      { col:0,  row:9,  l:"Git and GitHub", t:"base", p:1,
+                d:"Version control. Before it is a team tool, it is the safety net that lets you experiment without fear of breaking what already worked.",
+                tools:["branch and merge","pull requests","rebase","conflict resolution"] },
+    linux:    { col:0,  row:23, l:"Linux and the command line", t:"base", p:2,
+                d:"Almost every server in the world runs Linux. Without a shell, the work stops at the first machine with no graphical interface.",
+                tools:["bash","ssh","permissions","systemd","grep and pipes"] },
+    http:     { col:1,  row:8,  l:"HTTP and REST", t:"base", p:1,
+                d:"The protocol holding up practically every integration. Understanding verbs, status codes, headers and bodies solves half of all integration bugs.",
+                tools:["methods and status codes","JSON","CORS","OpenAPI"] },
+    sql:      { col:1,  row:18, l:"SQL", t:"base", p:2,
+                d:"The query language that outlived every trend. It is the front door to data on any route, including the AI ones.",
+                tools:["joins","aggregations","window functions","indexes","CTEs"] },
+    stats:    { col:2,  row:14, l:"Statistics and probability", t:"base", p:3,
+                d:"Distributions, sampling, correlation and uncertainty. It is what stops you mistaking noise for a finding, and what is missing in people who only know how to call libraries.",
+                tools:["hypothesis testing","confidence intervals","bias and variance","Bayes"] },
+
+    // languages
+    python:   { col:2,  row:12, l:"Python", t:"hub", p:2,
+                d:"The center of the map. It is the lingua franca of data, ML, applied AI and a good share of backend and infrastructure automation. Almost no modern AI route skips it.",
+                tools:["typing and dataclasses","virtual environments","asyncio","pyproject and uv"] },
+    jsts:     { col:2,  row:3,  l:"JavaScript and TypeScript", t:"tech", p:3,
+                d:"The only language that runs in the browser, which makes it mandatory for anything with an interface. TypeScript is the professional default: JavaScript with types.",
+                tools:["modern ES","types and generics","modules","the event loop"] },
+    go:       { col:2,  row:25, l:"Go or Rust", t:"tech", p:3,
+                d:"Compiled infrastructure languages. They show up when the bottleneck is performance or concurrency, or when the binary has to be small and self-contained.",
+                tools:["goroutines","ownership","static binaries","CLIs"] },
+
+    // web / frontend
+    htmlcss:  { col:1,  row:2,  l:"HTML and CSS", t:"base", p:2,
+                d:"The structure and the look of the web. Modern layout with grid and flexbox solves most of what used to require a framework.",
+                tools:["semantics","flexbox and grid","custom properties","container queries"] },
+    react:    { col:3,  row:2,  l:"React", t:"tech", p:3,
+                d:"The dominant interface framework in the market. Components, state and effects, the mental model Vue, Svelte and Angular also share to varying degrees.",
+                tools:["hooks","derived state","context","remote data handling"] },
+    tailwind: { col:4,  row:0,  l:"Tailwind and design systems", t:"pratica", p:1,
+                d:"Utility styling and reusable components. Less about the tool and more about holding visual consistency across a team.",
+                tools:["Tailwind","shadcn/ui","design tokens","Storybook"] },
+    nextjs:   { col:5,  row:2,  l:"Next.js and rendering", t:"tech", p:3,
+                d:"The framework that puts frontend and server in one project. Where you decide what runs in the browser, what runs on the server and what gets cached.",
+                tools:["SSR and SSG","API routes","server components","streaming"] },
+    a11y:     { col:6,  row:1,  l:"Accessibility and performance", t:"pratica", p:2,
+                d:"Making the interface work for people on a keyboard, a screen reader or a bad connection. It is what separates professional frontend from frontend that only assembles screens.",
+                tools:["ARIA","keyboard navigation","Core Web Vitals","Lighthouse"] },
+    rn:       { col:4,  row:6,  l:"React Native and Expo", t:"tech", p:3,
+                d:"Native apps for iOS and Android on top of what you already know from React. The shortest path from web into mobile.",
+                tools:["Expo","navigation","native APIs","push notifications"] },
+    mobiledist:{col:5,  row:6,  l:"Shipping to the app stores", t:"pratica", p:2,
+                d:"Signing, App Store and Play Store review, versioning and over-the-air updates. The part of mobile that is not code and still holds up releases.",
+                tools:["code signing","EAS builds","staged rollouts","store policies"] },
+
+    // backend
+    node:     { col:3,  row:7,  l:"Node.js", t:"tech", p:2,
+                d:"JavaScript on the server. Lets one person cover both ends with a single language, which is where the fullstack profile historically comes from.",
+                tools:["Express","Fastify","streams","workers"] },
+    fastapi:  { col:3,  row:9,  l:"FastAPI or Django", t:"tech", p:2,
+                d:"The two ways to write a backend in Python: FastAPI for lean async APIs, Django for full applications with admin and ORM included.",
+                tools:["Pydantic","dependency injection","ORM","migrations"] },
+    db:       { col:4,  row:8,  l:"Database modeling", t:"pratica", p:3,
+                d:"Deciding tables, keys, indexes and transactions. Mistakes here only surface months later, when they are already expensive to undo.",
+                tools:["PostgreSQL","normalization","transactions","Redis"] },
+    auth:     { col:5,  row:7,  l:"Authentication and security", t:"pratica", p:3,
+                d:"Who the user is, what they may do and how the secret is stored. This is the area where improvising has real consequences.",
+                tools:["OAuth2 and OIDC","JWT","secret management","OWASP Top 10"] },
+    tests:    { col:5,  row:9,  l:"Automated testing", t:"pratica", p:2,
+                d:"Executable proof that the system does what it promises. It is what lets you touch code you did not write without crossing your fingers.",
+                tools:["pytest","integration tests","fixtures","coverage"] },
+    queues:   { col:6,  row:8,  l:"Queues and async work", t:"tech", p:2,
+                d:"Getting everything slow out of the request path. Essential the moment a model call takes thirty seconds.",
+                tools:["Celery","RabbitMQ","SQS","idempotency","retry with backoff"] },
+
+    // data / ML
+    numpy:    { col:3,  row:12, l:"NumPy and pandas", t:"tech", p:2,
+                d:"Handling tabular and numeric data in Python. It is where most of the time on any data project actually goes.",
+                tools:["DataFrame","vectorization","groupby","joins","Polars"] },
+    sklearn:  { col:4,  row:13, l:"scikit-learn", t:"tech", p:2,
+                d:"Classical models behind one interface: regression, trees, clustering, pipelines. It solves more business problems than deep learning does.",
+                tools:["pipelines","XGBoost and LightGBM","cross-validation","feature selection"] },
+    validacao:{ col:5,  row:13, l:"Validation and metrics", t:"pratica", p:3,
+                d:"Picking the right metric, building the split and catching leakage. It is what separates a model that works from a model that looked like it worked.",
+                tools:["ROC and PR","confusion matrix","time-based validation","data leakage"] },
+    pytorch:  { col:5,  row:15, l:"PyTorch", t:"tech", p:3,
+                d:"The standard neural network framework in research and, increasingly, in production. Tensors, autograd and an explicit training loop.",
+                tools:["autograd","DataLoader","GPU training","Lightning"] },
+    nlp:      { col:6,  row:14, l:"NLP and embeddings", t:"tech", p:3,
+                d:"Representing text as vectors that carry meaning. It is the technical foundation semantic search and RAG both stand on.",
+                tools:["tokenization","sentence-transformers","cosine similarity","reranking"] },
+    cv:       { col:6,  row:16, l:"Computer vision", t:"tech", p:3,
+                d:"Image classification, detection and segmentation. A field where labeled data usually costs more than the model.",
+                tools:["CNNs","YOLO","augmentation","OpenCV","ViT"] },
+    hf:       { col:7,  row:15, l:"Hugging Face", t:"tech", p:2,
+                d:"The registry and ecosystem where open models live. Download, evaluate and serve somebody else's model without training from scratch.",
+                tools:["transformers","datasets","the Hub","PEFT"] },
+    finetune: { col:8,  row:16, l:"Fine-tuning and LoRA", t:"tech", p:3,
+                d:"Specializing an existing model on your own data. It makes sense once prompting and RAG are exhausted, and rarely before that.",
+                tools:["LoRA and QLoRA","quantization","dataset curation","post-training evaluation"] },
+    serving:  { col:8,  row:15, l:"Model serving", t:"tech", p:3,
+                d:"Turning a trained model into a stable endpoint, with predictable latency and GPU cost under control.",
+                tools:["vLLM","Triton","TorchServe","batching","quantization"] },
+
+    // applied AI
+    llmapi:   { col:5,  row:11, l:"LLM APIs", t:"tech", p:1,
+                d:"Consuming language models as a service. The fastest way into applied AI and, today, the starting point for most products.",
+                tools:["function calling","streaming","context window","cost control"] },
+    prompt:   { col:6,  row:11, l:"Prompting and LLM evaluation", t:"pratica", p:2,
+                d:"Writing instructions that work consistently and, above all, measuring that. Without an eval set, tuning a prompt is guesswork with an extra step.",
+                tools:["few-shot","structured output","LLM as judge","eval sets"] },
+    vectordb: { col:7,  row:13, l:"Vector databases", t:"tech", p:2,
+                d:"Storing and searching embeddings by similarity. Postgres with pgvector often already covers it, and the dedicated database is premature optimization.",
+                tools:["pgvector","Qdrant","FAISS","HNSW","hybrid search"] },
+    rag:      { col:7,  row:11, l:"RAG: retrieval and generation", t:"pratica", p:3,
+                d:"Giving the model the right context at the right moment. In practice it is an information retrieval problem, and that is exactly where almost every bad RAG fails.",
+                tools:["chunking","reranking","source citation","retrieval evaluation"] },
+    agents:   { col:9,  row:11, l:"Agents, tools and MCP", t:"pratica", p:3,
+                d:"Models that call tools, decide steps and operate systems. The upside is real and so is the cost of a mistake, which is why limits and observability matter here.",
+                tools:["tool use","MCP","decision loops","memory","sandboxing"] },
+    guardrails:{col:9,  row:13, l:"Guardrails and AI security", t:"pratica", p:2,
+                d:"Prompt injection, data leakage and unsafe output. It becomes a requirement the instant the system touches customer data.",
+                tools:["output validation","permission boundaries","red teaming","auditing"] },
+
+    // data engineering / BI
+    dbt:      { col:4,  row:17, l:"Dimensional modeling and dbt", t:"pratica", p:3,
+                d:"Turning raw data into a model the business can query. Facts, dimensions and one single definition of each metric.",
+                tools:["dbt","star schema","SCD","data tests"] },
+    airflow:  { col:5,  row:18, l:"Pipeline orchestration", t:"tech", p:2,
+                d:"Scheduling, chaining and reprocessing data loads. The value is in safely re-running when something fails at three in the morning.",
+                tools:["Airflow","Dagster","DAGs","backfill","idempotency"] },
+    warehouse:{ col:6,  row:17, l:"Data warehouse and lakehouse", t:"tech", p:2,
+                d:"Where analytical data lives. Columnar storage, partitioning and a cost model that punishes a badly written query.",
+                tools:["BigQuery","Snowflake","Databricks","Parquet","Iceberg"] },
+    spark:    { col:6,  row:19, l:"Distributed processing", t:"tech", p:3,
+                d:"For when the data does not fit on one machine. Worth remembering that most datasets do fit, and an unnecessary cluster is expensive.",
+                tools:["Spark","partitioning","shuffle","Delta Lake"] },
+    kafka:    { col:7,  row:19, l:"Event streaming", t:"tech", p:3,
+                d:"Data in motion rather than in batches. It changes the mental model: ordering, delivery and reprocessing all become explicit decisions.",
+                tools:["Kafka","Pub/Sub","exactly-once","time windows"] },
+    viz:      { col:6,  row:18, l:"Visualization and narrative", t:"pratica", p:2,
+                d:"Turning a result into a decision. This is the step that determines whether analytical work gets used or filed away.",
+                tools:["grammar of graphics","Plotly","Streamlit","chart choice"] },
+    bi:       { col:3,  row:20, l:"BI and dashboards", t:"tech", p:2,
+                d:"A self-service layer for people who do not write code. Less about a pretty chart and more about a metric defined exactly once.",
+                tools:["Power BI","Looker","Tableau","semantic layer"] },
+
+    // infrastructure
+    docker:   { col:3,  row:23, l:"Docker and containers", t:"tech", p:2,
+                d:"Packaging the application together with its whole environment. It settles \"it works on my machine\" for good and is a prerequisite for almost any cloud.",
+                tools:["Dockerfile","multi-stage","volumes","Compose"] },
+    cicd:     { col:4,  row:22, l:"CI/CD", t:"pratica", p:2,
+                d:"Testing and shipping automatically on every change. It lowers the cost of being wrong, which is what makes frequent delivery possible.",
+                tools:["GitHub Actions","pipelines","environments","rollback"] },
+    cloud:    { col:5,  row:23, l:"Cloud and serverless", t:"tech", p:3,
+                d:"Compute, storage, network and identity on demand. Serverless takes the machine out of the equation and charges for usage.",
+                tools:["Cloud Run","Lambda","IAM","object storage","VPC"] },
+    iac:      { col:6,  row:22, l:"Infrastructure as code", t:"pratica", p:2,
+                d:"Describing infrastructure in a versioned file instead of clicking through a console. It makes the environment reproducible and reviewable.",
+                tools:["Terraform","Pulumi","remote state","modules"] },
+    k8s:      { col:7,  row:23, l:"Kubernetes", t:"tech", p:3,
+                d:"Container orchestration at scale. Powerful and expensive in complexity, and plenty of teams adopt it before they need it.",
+                tools:["deployments","services","autoscaling","Helm"] },
+    obs:      { col:8,  row:22, l:"Observability", t:"pratica", p:2,
+                d:"Logs, metrics and traces. Without them, a distributed system in production becomes guesswork the moment something breaks.",
+                tools:["OpenTelemetry","Prometheus","Grafana","alerts and SLOs"] },
+    finops:   { col:8,  row:25, l:"Cost and FinOps", t:"pratica", p:1,
+                d:"Knowing what each request costs. In AI this stopped being a detail: tokens and GPUs turn cost into an architectural requirement.",
+                tools:["budgets","tag-level tracking","caching","model choice"] },
+    mlflow:   { col:6,  row:25, l:"Experiment tracking", t:"pratica", p:2,
+                d:"Recording the data, code, parameters and metrics of every training run. It is what lets you answer why June's model was better.",
+                tools:["MLflow","DVC","model registry","lineage"] },
+    drift:    { col:8,  row:24, l:"Model monitoring", t:"pratica", p:3,
+                d:"A model does not break: it ages quietly as the world moves on. Detecting that decay is a discipline of its own.",
+                tools:["data drift","concept drift","shadow deploys","retraining"] },
+
+    // destinations
+    role_frontend:  { col:7,  row:1,  l:"Frontend Eng.", t:"dest", p:0,
+                d:"Builds the interface the user actually touches. The role goes well beyond visuals now: performance, accessibility and client-side data state.",
+                tools:["React","TypeScript","design systems","Core Web Vitals"] },
+    role_mobile:    { col:7,  row:6,  l:"Mobile Eng.", t:"dest", p:0,
+                d:"Apps for iOS and Android. Coming via React Native carries over almost everything from web, plus the store cycle and device capabilities.",
+                tools:["React Native","Expo","native APIs","store releases"] },
+    role_fullstack: { col:8,  row:4,  l:"Fullstack Eng.", t:"dest", p:0,
+                d:"Covers interface, server and database. Common in small teams and in product work, where shipping the whole feature beats depth in one layer.",
+                tools:["Next.js","Node","PostgreSQL","deployment"] },
+    role_backend:   { col:8,  row:8,  l:"Backend Eng.", t:"dest", p:0,
+                d:"Owns the API, the data and the reliability of what runs on the server. It is the route that extends into applied AI most naturally.",
+                tools:["FastAPI","PostgreSQL","queues","observability"] },
+    role_ai:        { col:11, row:11, l:"AI Engineer", t:"dest", p:0,
+                d:"Builds systems that use language models: retrieving context, calling tools, evaluating and controlling cost. Less training the model, more engineering around it.",
+                tools:["RAG","agents","evaluation","LLM APIs"] },
+    role_ml:        { col:10, row:14, l:"ML Engineer", t:"dest", p:0,
+                d:"Takes models to production and keeps them alive. Sits on the border between the people who train and the people who operate, and has to speak both languages.",
+                tools:["scikit-learn","PyTorch","serving","monitoring"] },
+    role_dl:        { col:10, row:16, l:"Deep Learning Spec.", t:"dest", p:0,
+                d:"Works on the architecture and the training of the model itself, in vision, language or multimodal. The route closest to research, and the one that values formal study most.",
+                tools:["PyTorch","CUDA","reading papers","fine-tuning"] },
+    role_ds:        { col:9,  row:17, l:"Data Scientist", t:"dest", p:0,
+                d:"Answers business questions with statistical method. The deliverable is usually a defended decision, not a system in production.",
+                tools:["statistics","pandas","experimentation","communication"] },
+    role_de:        { col:9,  row:20, l:"Data Engineer", t:"dest", p:0,
+                d:"Makes sure the data arrives reliably, in the right shape and on time. It is the foundation data science and AI both depend on, and the one growing fastest in demand.",
+                tools:["SQL","dbt","Airflow","warehouse"] },
+    role_da:        { col:7,  row:20, l:"Data Analyst", t:"dest", p:0,
+                d:"The shortest route into working with data. Queries, analyses and presents, without necessarily building a system, and works as a springboard to the rest.",
+                tools:["SQL","BI","spreadsheets","visualization"] },
+    role_cloud:     { col:10, row:22, l:"Cloud / DevOps Eng.", t:"dest", p:0,
+                d:"Builds and runs the platform everything else sits on. Focused on automation, reliability and cost.",
+                tools:["Terraform","Kubernetes","CI/CD","observability"] },
+    role_mlops:     { col:10, row:24, l:"MLOps Engineer", t:"dest", p:0,
+                d:"Applies engineering discipline to the model lifecycle: versioning, shipping, monitoring and retraining without manual steps.",
+                tools:["MLflow","Kubernetes","CI/CD","drift"] }
+  };
+
+  // ------------------------------------------------------------------- lines
+  const ROUTES = [
+    { id:"fund", nome:"Common trunk", fam:"Fundamentals", dest:null, off:0,
+      resumo:"The boarding point for every line. Nobody skips these three stations and gets away with it.",
+      st:["git","logica","python"] },
+
+    { id:"front", nome:"Frontend", fam:"Web and product", dest:"role_frontend", off:-6,
+      resumo:"From an HTML document to an interface that survives production, with accessibility and performance as requirements rather than decoration.",
+      st:["htmlcss","jsts","react","tailwind","nextjs","a11y","role_frontend"], opc:["tailwind"] },
+
+    { id:"mobile", nome:"Mobile", fam:"Web and product", dest:"role_mobile", off:6,
+      resumo:"Reuses the React foundation to reach the device. The genuinely new detour is the store release cycle.",
+      st:["jsts","react","rn","mobiledist","role_mobile"] },
+
+    { id:"fullstack", nome:"Fullstack", fam:"Web and product", dest:"role_fullstack", off:0,
+      resumo:"Frontend crossing over to the server. The predictable gap is in data and in reliability.",
+      st:["htmlcss","jsts","react","node","db","auth","role_fullstack"], opc:["auth"] },
+
+    { id:"back", nome:"Backend", fam:"Web and product", dest:"role_backend", off:6,
+      resumo:"The most versatile route on the map: it feeds fullstack, MLOps and applied AI without major detours.",
+      st:["http","python","fastapi","db","tests","queues","auth","role_backend"], opc:["queues"] },
+
+    { id:"ia-back", nome:"Applied AI · via backend", fam:"AI and ML", dest:"role_ai", off:0,
+      resumo:"Reaches AI through people who already know how to stand a system up. Ships fast and reliably, and usually owes statistics and evaluation.",
+      st:["python","fastapi","llmapi","prompt","rag","agents","guardrails","role_ai"] },
+
+    { id:"ia-dados", nome:"Applied AI · via data", fam:"AI and ML", dest:"role_ai", off:-7,
+      resumo:"Reaches AI through people who understand data and models. Evaluates rigorously, and usually owes production engineering.",
+      st:["python","numpy","sklearn","nlp","vectordb","rag","agents","role_ai"] },
+
+    { id:"ia-prod", nome:"Applied AI · via product", fam:"AI and ML", dest:"role_ai", off:7,
+      resumo:"Reaches AI through the interface. Owns how the model feels to use, and usually owes the entire data layer.",
+      st:["jsts","react","nextjs","llmapi","prompt","rag","role_ai"] },
+
+    { id:"ml", nome:"Machine Learning", fam:"AI and ML", dest:"role_ml", off:0,
+      resumo:"The classic path: data, classical models, honest validation, and only then neural networks and shipping.",
+      st:["python","stats","numpy","sklearn","validacao","pytorch","serving","role_ml"], opc:["pytorch"] },
+
+    { id:"dl", nome:"Deep Learning", fam:"AI and ML", dest:"role_dl", off:0,
+      resumo:"The most vertical route on the map. It demands mathematics, patience with training runs and continuous reading of the literature.",
+      st:["python","pytorch","nlp","cv","hf","finetune","role_dl"] },
+
+    { id:"ds", nome:"Data Science", fam:"Data", dest:"role_ds", off:-6,
+      resumo:"Statistics before libraries. The deliverable is the decision you can defend, not the system you shipped.",
+      st:["sql","python","stats","numpy","sklearn","validacao","viz","role_ds"] },
+
+    { id:"da", nome:"Data Analysis and BI", fam:"Data", dest:"role_da", off:6,
+      resumo:"The shortest route into working with data, and the springboard most often used to reach the other three in this family.",
+      st:["sql","bi","viz","role_da"] },
+
+    { id:"de", nome:"Data Engineering", fam:"Data", dest:"role_de", off:0,
+      resumo:"Builds the plumbing everything else depends on. Worth it on its own, and the most solid base for MLOps.",
+      st:["sql","python","dbt","airflow","warehouse","spark","kafka","role_de"], opc:["spark","kafka"] },
+
+    { id:"cloud", nome:"Cloud and DevOps", fam:"Infrastructure", dest:"role_cloud", off:-6,
+      resumo:"From the shell to the platform. Kubernetes comes late on purpose: most systems do not need it.",
+      st:["linux","go","docker","cicd","cloud","iac","k8s","finops","obs","role_cloud"], opc:["go","k8s"] },
+
+    { id:"mlops", nome:"MLOps", fam:"Infrastructure", dest:"role_mlops", off:6,
+      resumo:"DevOps with two extra problems: the model is a versionable artifact, and it decays on its own over time.",
+      st:["python","docker","cicd","mlflow","k8s","drift","role_mlops"] }
+  ];
+
+  // -------------------------------------------------------------- geometry
+  const X0 = 150, DX = 190, Y0 = 80, DY = 64;
+  const W = X0 + 11 * DX + 260, H = Y0 + 25 * DY + 120;
+  const px = n => X0 + n.col * DX;
+  const py = n => Y0 + n.row * DY;
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs) => {
+    const e = document.createElementNS(SVG_NS, tag);
+    for (const k in attrs) if (attrs[k] !== undefined && attrs[k] !== null) e.setAttribute(k, attrs[k]);
+    return e;
+  };
+
+  // how many lines pass through each station (drives size and interchange status)
+  const passes = {};
+  for (const r of ROUTES) for (const s of r.st) (passes[s] ||= []).push(r.id);
+
+  const routeById = Object.fromEntries(ROUTES.map(r => [r.id, r]));
+  const destinos = ROUTES.filter(r => r.dest).map(r => r.dest);
+  const destUnicos = [...new Set(destinos)];
+
+  // transit-style routing: leave straight, take the 45 degree diagonal, arrive straight
+  function transitPoints(a, b, off) {
+    const x1 = px(a), y1 = py(a) + off, x2 = px(b), y2 = py(b) + off;
+    const dx = x2 - x1, dy = y2 - y1;
+    if (Math.abs(dy) < 1 || Math.abs(dx) < 1) return [[x1, y1], [x2, y2]];
+    const adx = Math.abs(dx), ady = Math.abs(dy);
+    const diag = Math.min(adx, ady);
+    const sx = Math.sign(dx), sy = Math.sign(dy);
+    if (adx >= ady) {
+      const folga = (adx - diag) / 2;
+      return [[x1, y1], [x1 + sx * folga, y1], [x1 + sx * (folga + diag), y1 + sy * diag], [x2, y2]];
+    }
+    const folga = (ady - diag) / 2;
+    return [[x1, y1], [x1, y1 + sy * folga], [x1 + sx * diag, y1 + sy * (folga + diag)], [x2, y2]];
+  }
+
+  // wrap the label into at most three short lines
+  function wrap(txt, max) {
+    const w = txt.split(" "), out = []; let cur = "";
+    for (const p of w) {
+      if (!cur.length) cur = p;
+      else if ((cur + " " + p).length <= max) cur += " " + p;
+      else { out.push(cur); cur = p; }
+    }
+    if (cur) out.push(cur);
+    return out.slice(0, 3);
+  }
+
+  // ---------------------------------------------------------------- desenho
+  const svg = document.getElementById("map");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const root = el("g", { id: "root" });
+  svg.appendChild(root);
+
+  const gGrid = el("g", {}); const gLines = el("g", {}); const gNodes = el("g", {});
+  root.append(gGrid, gLines, gNodes);
+
+  for (let c = 0; c <= 11; c++) for (let r = 0; r <= 25; r++) {
+    gGrid.appendChild(el("circle", { cx: X0 + c * DX, cy: Y0 + r * DY, r: 1.2, class: "grid-dot" }));
+  }
+
+  const lineEls = {};
+  for (const r of ROUTES) {
+    const pts = [];
+    for (let i = 0; i < r.st.length - 1; i++) {
+      const seg = transitPoints(N[r.st[i]], N[r.st[i + 1]], r.off);
+      for (const p of seg) {
+        const last = pts[pts.length - 1];
+        if (!last || last[0] !== p[0] || last[1] !== p[1]) pts.push(p);
+      }
+    }
+    const pl = el("polyline", {
+      class: "route-line",
+      points: pts.map(p => p.join(",")).join(" "),
+      style: `stroke: var(--r-${r.id}); stroke-width: ${r.id === "fund" ? 7 : 5.5}`
+    });
+    pl.dataset.route = r.id;
+    lineEls[r.id] = pl;
+    gLines.appendChild(pl);
+  }
+
+  const nodeEls = {};
+  for (const id in N) {
+    const n = N[id], x = px(n), y = py(n);
+    const linhas = passes[id] || [];
+    const primeira = linhas[0] ? `var(--r-${linhas[0]})` : "var(--ink-3)";
+
+    if (n.t === "dest") {
+      const g = el("g", { class: "station dest", tabindex: "0", role: "button",
+                          "aria-label": `Destino: ${n.l}` });
+      const w = Math.max(150, n.l.length * 8.4);
+      g.appendChild(el("rect", { class: "plate", x: x - w / 2, y: y - 17, width: w, height: 34,
+                                 style: `fill: ${primeira}; stroke: ${primeira}` }));
+      const t = el("text", { class: "plate-lbl", x, y: y + 4.5 });
+      t.textContent = n.l;
+      g.appendChild(t);
+      g.dataset.node = id;
+      gNodes.appendChild(g); nodeEls[id] = g; continue;
+    }
+
+    const hub = n.t === "hub";
+    const rad = hub ? 17 : (linhas.length >= 3 ? 11.5 : 8);
+    const g = el("g", { class: "station" + (hub ? " hub" : ""), tabindex: "0", role: "button",
+                        "aria-label": `${n.l}. ${linhas.length} linha${linhas.length === 1 ? "" : "s"} passa${linhas.length === 1 ? "" : "m"} aqui.` });
+    if (linhas.length >= 3 && !hub) {
+      g.appendChild(el("circle", { class: "ring outer", cx: x, cy: y, r: rad + 4,
+                                   style: `stroke: ${primeira}; fill: none; opacity:.28; stroke-width:2` }));
+    }
+    g.appendChild(el("circle", { class: "ring", cx: x, cy: y, r: rad, style: `stroke: ${primeira}` }));
+    const lines = wrap(n.l, hub ? 12 : 17);
+    const t = el("text", { class: "lbl", x, y: y + rad + 16 });
+    lines.forEach((ln, i) => {
+      const ts = el("tspan", { x, dy: i === 0 ? 0 : 14 });
+      ts.textContent = ln; t.appendChild(ts);
+    });
+    g.appendChild(t);
+    g.dataset.node = id;
+    gNodes.appendChild(g); nodeEls[id] = g;
+  }
+
+  // ------------------------------------------------------------ pan e zoom
+  let scale = 1, tx = 0, ty = 0;
+  const box = document.getElementById("mapbox");
+  const apply = () => root.setAttribute("transform", `translate(${tx} ${ty}) scale(${scale})`);
+  function fit() {
+    const b = box.getBoundingClientRect();
+    scale = Math.min(b.width / W, b.height / H) * 0.98;
+    tx = (b.width - W * scale) / 2; ty = (b.height - H * scale) / 2;
+    svg.setAttribute("viewBox", `0 0 ${b.width} ${b.height}`);
+    apply();
+  }
+  function zoom(f, cx, cy) {
+    const b = box.getBoundingClientRect();
+    cx = cx ?? b.width / 2; cy = cy ?? b.height / 2;
+    const ns = Math.min(3.2, Math.max(0.22, scale * f));
+    tx = cx - (cx - tx) * (ns / scale); ty = cy - (cy - ty) * (ns / scale);
+    scale = ns; apply();
+  }
+  document.getElementById("zin").onclick = () => zoom(1.28);
+  document.getElementById("zout").onclick = () => zoom(1 / 1.28);
+  document.getElementById("zfit").onclick = fit;
+
+  let drag = null;
+  box.addEventListener("pointerdown", e => {
+    if (e.target.closest(".station")) return;
+    drag = { x: e.clientX - tx, y: e.clientY - ty };
+    box.classList.add("dragging"); box.setPointerCapture(e.pointerId);
+  });
+  box.addEventListener("pointermove", e => {
+    if (!drag) return;
+    tx = e.clientX - drag.x; ty = e.clientY - drag.y; apply();
+  });
+  box.addEventListener("pointerup", () => { drag = null; box.classList.remove("dragging"); });
+  box.addEventListener("wheel", e => {
+    e.preventDefault();
+    const b = box.getBoundingClientRect();
+    zoom(e.deltaY < 0 ? 1.12 : 1 / 1.12, e.clientX - b.left, e.clientY - b.top);
+  }, { passive: false });
+
+  // ---------------------------------------------------------------- estado
+  let selNode = null, selDest = "", selRoute = "";
+
+  function rotasAtivas() {
+    if (selRoute) return [selRoute];
+    if (selDest) return ROUTES.filter(r => r.dest === selDest || r.id === "fund").map(r => r.id);
+    return null;
+  }
+
+  function repaint() {
+    const ativas = rotasAtivas();
+    const set = ativas ? new Set(ativas) : null;
+    const visiveis = new Set();
+    if (set) for (const id of set) for (const s of routeById[id].st) visiveis.add(s);
+
+    for (const r of ROUTES) {
+      lineEls[r.id].classList.toggle("dimmed", !!set && !set.has(r.id));
+    }
+    for (const id in nodeEls) {
+      const g = nodeEls[id];
+      g.classList.toggle("dimmed", !!set && !visiveis.has(id));
+      g.classList.toggle("sel", id === selNode);
+    }
+    document.querySelectorAll(".fam button").forEach(b => {
+      b.setAttribute("aria-pressed", String(b.dataset.route === selRoute));
+    });
+
+    const ro = document.getElementById("readout");
+    if (selRoute) {
+      const r = routeById[selRoute];
+      ro.innerHTML = `Isolated line: <b>${r.nome}</b> — ${r.st.length} stations${r.dest ? `, terminal <b>${N[r.dest].l}</b>` : ""}.`;
+    } else if (selDest) {
+      const rs = ROUTES.filter(r => r.dest === selDest);
+      ro.innerHTML = `<b>${rs.length}</b> line${rs.length === 1 ? "" : "s"} run${rs.length === 1 ? "s" : ""} to <b>${N[selDest].l}</b>: ${rs.map(r => r.nome).join(" · ")}.`;
+    } else {
+      const bald = Object.keys(passes).filter(k => passes[k].length >= 3 && N[k].t !== "dest").length;
+      ro.innerHTML = `Whole territory — <b>${Object.keys(N).length - destUnicos.length}</b> stations, <b>${ROUTES.length}</b> lines, <b>${bald}</b> interchanges and <b>${destUnicos.length}</b> terminals.`;
+    }
+  }
+
+  // ----------------------------------------------------------------- panel
+  const panel = document.getElementById("panel");
+  const TIPO = { base:"Fundamental", tech:"Technology", pratica:"Practice", dest:"Terminal", hub:"Central hub" };
+
+  function renderPanel(id) {
+    if (!id) {
+      panel.innerHTML = `
+        <div class="kicker">Station panel</div>
+        <h2>Click a station</h2>
+        <p>Every station opens here with what it is, the tools typically involved, how many lines pass through it and what comes immediately before and after on each journey.</p>
+        <h3>Start with the interchanges</h3>
+        <ul class="routelist">${
+          Object.keys(passes)
+            .filter(k => N[k].t !== "dest")
+            .sort((a, b) => passes[b].length - passes[a].length)
+            .slice(0, 6)
+            .map(k => `<li><button type="button" data-goto="${k}">
+                 <span class="swatch tall" style="background: var(--r-${passes[k][0]})"></span>
+                 <span>${N[k].l} <span style="color:var(--ink-3)">· ${passes[k].length} lines</span></span></button></li>`).join("")
+        }</ul>`;
+      wirePanel(); return;
+    }
+    const n = N[id], linhas = passes[id] || [];
+    const viz = [];
+    for (const rid of linhas) {
+      const r = routeById[rid], i = r.st.indexOf(id);
+      viz.push({ r, antes: i > 0 ? N[r.st[i - 1]].l : null, depois: i < r.st.length - 1 ? N[r.st[i + 1]].l : null,
+                 opcional: (r.opc || []).includes(id) });
+    }
+    panel.innerHTML = `
+      <div class="kicker">${TIPO[n.t]}${linhas.length >= 3 && n.t !== "dest" ? " · interchange" : ""}</div>
+      <h2>${n.l}</h2>
+      <p>${n.d}</p>
+      ${n.p ? `<div class="depth">Depth to production
+          <span class="bars">${[1,2,3].map(i => `<i class="${i <= n.p ? "on" : ""}"></i>`).join("")}</span>
+        </div>` : ""}
+      <h3>${n.t === "dest" ? "Core of the role" : "Tools and concepts"}</h3>
+      <div class="chips">${n.tools.map(t => `<span class="chip">${t}</span>`).join("")}</div>
+      <h3>${n.t === "dest" ? `${linhas.length} line${linhas.length === 1 ? "" : "s"} end${linhas.length === 1 ? "s" : ""} here` : `${linhas.length} line${linhas.length === 1 ? "" : "s"} pass${linhas.length === 1 ? "es" : ""} through here`}</h3>
+      <ul class="routelist">${viz.map(v => `
+        <li><button type="button" data-route="${v.r.id}">
+          <span class="swatch" style="background: var(--r-${v.r.id})"></span>
+          <span>${v.r.nome}${v.opcional ? ' <span style="color:var(--ink-3)">· optional on this line</span>' : ""}</span>
+        </button></li>`).join("")}</ul>
+      ${viz.some(v => v.antes || v.depois) ? `<h3>Neighbors</h3>
+        <div class="neighbors">${viz.map(v => `
+          <div class="neighbor"><span class="arrow">${v.r.nome.slice(0, 3).toUpperCase()}</span>
+            <span>${v.antes ? `<b>${v.antes}</b> → ` : "start → "}${v.depois ? `<b>${v.depois}</b>` : "terminal"}</span></div>`).join("")}
+        </div>` : ""}`;
+    wirePanel();
+  }
+
+  function wirePanel() {
+    panel.querySelectorAll("[data-route]").forEach(b => b.onclick = () => {
+      selRoute = selRoute === b.dataset.route ? "" : b.dataset.route;
+      document.getElementById("route").value = selRoute;
+      if (selRoute) { selDest = ""; document.getElementById("dest").value = ""; }
+      repaint();
+    });
+    panel.querySelectorAll("[data-goto]").forEach(b => b.onclick = () => {
+      selNode = b.dataset.goto; renderPanel(selNode); repaint();
+    });
+  }
+
+  // -------------------------------------------------------------- controls
+  const selDestEl = document.getElementById("dest");
+  destUnicos.forEach(d => {
+    const o = document.createElement("option");
+    o.value = d; o.textContent = N[d].l; selDestEl.appendChild(o);
+  });
+  const selRouteEl = document.getElementById("route");
+  ROUTES.filter(r => r.dest).forEach(r => {
+    const o = document.createElement("option");
+    o.value = r.id; o.textContent = r.nome; selRouteEl.appendChild(o);
+  });
+  selDestEl.onchange = () => { selDest = selDestEl.value; selRoute = ""; selRouteEl.value = ""; repaint(); };
+  selRouteEl.onchange = () => { selRoute = selRouteEl.value; selDest = ""; selDestEl.value = ""; repaint(); };
+  document.getElementById("clear").onclick = () => {
+    selDest = selRoute = ""; selNode = null;
+    selDestEl.value = ""; selRouteEl.value = "";
+    renderPanel(null); repaint();
+  };
+
+  gNodes.addEventListener("click", e => {
+    const g = e.target.closest(".station"); if (!g) return;
+    selNode = g.dataset.node; renderPanel(selNode); repaint();
+  });
+  gNodes.addEventListener("keydown", e => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const g = e.target.closest(".station"); if (!g) return;
+    e.preventDefault();
+    selNode = g.dataset.node; renderPanel(selNode); repaint();
+  });
+
+  // ---------------------------------------------------------------- legenda
+  const legend = document.getElementById("legend");
+  const familias = [...new Set(ROUTES.map(r => r.fam))];
+  legend.innerHTML = familias.map(f => `
+    <div class="fam"><h4>${f}</h4>
+      ${ROUTES.filter(r => r.fam === f).map(r => `
+        <button type="button" data-route="${r.id}" aria-pressed="false" ${r.dest ? "" : "disabled style='cursor:default'"}>
+          <span class="swatch" style="background: var(--r-${r.id})"></span>${r.nome}
+        </button>`).join("")}
+    </div>`).join("");
+  legend.querySelectorAll("button[data-route]").forEach(b => {
+    if (b.disabled) return;
+    b.onclick = () => {
+      selRoute = selRoute === b.dataset.route ? "" : b.dataset.route;
+      selRouteEl.value = selRoute; selDest = ""; selDestEl.value = "";
+      repaint();
+    };
+  });
+
+  // ------------------------------------------------------- cards for AI routes
+  document.getElementById("ai-cards").innerHTML = ROUTES.filter(r => r.dest === "role_ai").map(r => `
+    <div class="card" style="border-top-color: var(--r-${r.id})">
+      <div class="rt">${r.nome}</div>
+      <h3>${r.resumo.split(".")[0]}.</h3>
+      <p>${r.resumo.split(".").slice(1).join(".").trim()}</p>
+      <div class="path">${r.st.map(s => N[s].l).join(" → ")}</div>
+    </div>`).join("");
+
+  // -------------------------------------------------------------- inicializa
+  renderPanel(null);
+  repaint();
+  fit();
+  window.addEventListener("resize", fit);
+})();
+</script>
+
+</body>
+</html>
