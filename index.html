@@ -572,7 +572,7 @@
   // ------------------------------------------------------------------- lines
   const ROUTES = [
     { id:"fund", nome:"Common trunk", fam:"Fundamentals", dest:null, off:0,
-      resumo:"The boarding point for every line. Nobody skips these three stations and gets away with it.",
+      resumo:"Drawn once instead of repeated on every line. Git and logic are assumed on all of them. Python carries most of the map, though the web, BI and cloud routes reach their terminals without it.",
       st:["git","logica","python"] },
 
     { id:"front", nome:"Frontend", fam:"Web and product", dest:"role_frontend", off:-6,
@@ -821,7 +821,18 @@
 
   function rotasAtivas() {
     if (selRoute) return [selRoute];
-    if (selDest) return ROUTES.filter(r => r.dest === selDest || r.id === "fund").map(r => r.id);
+    if (selDest) {
+      const ativas = ROUTES.filter(r => r.dest === selDest).map(r => r.id);
+      // O tronco comum so acompanha o filtro quando alguma rota ativa de fato
+      // passa por uma estacao dele. Ele vinha entrando sempre, e isso acendia
+      // Git, Logica e Python em destinos que nao os atravessam: Analista de
+      // Dados vai por SQL, BI e visualizacao, e Cloud vai por Linux e Go.
+      // Mostrar o tronco ali afirmava uma ligacao que os proprios dados negam.
+      const estacoes = new Set();
+      for (const id of ativas) for (const s of routeById[id].st) estacoes.add(s);
+      if (routeById.fund.st.some(s => estacoes.has(s))) ativas.push("fund");
+      return ativas;
+    }
     return null;
   }
 
