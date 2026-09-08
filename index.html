@@ -183,7 +183,9 @@
 
   .grid-dot { fill: var(--line-soft); }
 
-  .route-line { fill: none; stroke-linecap: round; stroke-linejoin: round; transition: opacity .18s ease, stroke-width .18s ease; }
+  .route-line { fill: none; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; transition: opacity .18s ease, stroke-width .18s ease; }
+  .route-hit { fill: none; stroke: transparent; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; pointer-events: stroke; cursor: pointer; }
+  .route-hit.inerte { cursor: default; }
   .station { cursor: pointer; }
   .station .ring { fill: var(--surface); stroke-width: 3; transition: opacity .18s ease; }
   .station .lbl {
@@ -286,7 +288,7 @@
   <header>
     <div class="eyebrow">Technical route graph · 53 stations · 15 lines · 12 terminals · <a href="pt.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px;opacity:.85">Português</a></div>
     <h1>A route map of AI and software engineering</h1>
-    <p class="lede">This is not a skill tree, it is a <strong>graph</strong>. Stations are shared between lines, and several destinations are reachable by completely different journeys: you get to AI Engineer through data, through backend or through product, and each route leaves you carrying something different. Pick a destination to see which lines run there, or click a station to find out what it is and who passes through it.</p>
+    <p class="lede">This is not a skill tree, it is a <strong>graph</strong>. Stations are shared between lines, and several destinations are reachable by completely different journeys: you get to AI Engineer through data, through backend or through product, and each route leaves you carrying something different. Pick a destination to see which lines run there, click a line to isolate it, or click a station to find out what it is and who passes through it.</p>
   </header>
 
   <div class="controls">
@@ -709,6 +711,22 @@
     gLines.appendChild(pl);
   }
 
+  // faixa de clique invisivel e mais larga que o traco, para a linha ser
+  // clicavel tambem com o mapa afastado. Fica no fim de gLines, entao cobre
+  // todas as linhas visiveis e continua abaixo das estacoes, que vivem em gNodes.
+  const LARGURA_BASE = {};
+  for (const r of ROUTES) {
+    const vis = lineEls[r.id];
+    if (!vis) continue;
+    LARGURA_BASE[r.id] = r.id === "fund" ? 7 : 5.5;
+    const hit = el("polyline", {
+      class: "route-hit" + (r.dest ? "" : " inerte"),
+      points: vis.getAttribute("points")
+    });
+    hit.dataset.route = r.id;
+    gLines.appendChild(hit);
+  }
+
   const nodeEls = {};
   for (const id in N) {
     const n = N[id], x = px(n), y = py(n);
@@ -770,14 +788,23 @@
   document.getElementById("zout").onclick = () => zoom(1 / 1.28);
   document.getElementById("zfit").onclick = fit;
 
-  let drag = null;
+  // O arrasto so comeca depois de 4px de movimento, e a captura de ponteiro so e
+  // pedida nesse momento. Sem isso, um clique simples viraria captura e o evento
+  // de click nao chegaria as linhas.
+  let drag = null, arrastou = false;
   box.addEventListener("pointerdown", e => {
     if (e.target.closest(".station")) return;
-    drag = { x: e.clientX - tx, y: e.clientY - ty };
-    box.classList.add("dragging"); box.setPointerCapture(e.pointerId);
+    arrastou = false;
+    drag = { x: e.clientX - tx, y: e.clientY - ty, x0: e.clientX, y0: e.clientY, id: e.pointerId };
   });
   box.addEventListener("pointermove", e => {
     if (!drag) return;
+    if (!arrastou) {
+      if (Math.abs(e.clientX - drag.x0) + Math.abs(e.clientY - drag.y0) <= 4) return;
+      arrastou = true;
+      box.classList.add("dragging");
+      try { box.setPointerCapture(drag.id); } catch (_) {}
+    }
     tx = e.clientX - drag.x; ty = e.clientY - drag.y; apply();
   });
   box.addEventListener("pointerup", () => { drag = null; box.classList.remove("dragging"); });
@@ -914,6 +941,31 @@
     const g = e.target.closest(".station"); if (!g) return;
     selNode = g.dataset.node; renderPanel(selNode); repaint();
   });
+  function escolherLinha(id) {
+    const r = routeById[id];
+    if (!r || !r.dest) return;
+    selRoute = selRoute === id ? "" : id;
+    document.getElementById("route").value = selRoute;
+    if (selRoute) { selDest = ""; document.getElementById("dest").value = ""; }
+    repaint();
+  }
+
+  gLines.addEventListener("click", e => {
+    if (arrastou) return;
+    const h = e.target.closest("[data-route]");
+    if (h) escolherLinha(h.dataset.route);
+  });
+  gLines.addEventListener("pointerover", e => {
+    const h = e.target.closest(".route-hit");
+    if (!h || !lineEls[h.dataset.route]) return;
+    lineEls[h.dataset.route].style.strokeWidth = (LARGURA_BASE[h.dataset.route] + 3) + "px";
+  });
+  gLines.addEventListener("pointerout", e => {
+    const h = e.target.closest(".route-hit");
+    if (!h || !lineEls[h.dataset.route]) return;
+    lineEls[h.dataset.route].style.strokeWidth = LARGURA_BASE[h.dataset.route] + "px";
+  });
+
   gNodes.addEventListener("keydown", e => {
     if (e.key !== "Enter" && e.key !== " ") return;
     const g = e.target.closest(".station"); if (!g) return;
